@@ -147,7 +147,7 @@ The codebase includes deliberate gaps for homework assignments:
 ### Architecture
 
 - **Backend:** Express + TypeScript
-- **Database:** SQLite (better-sqlite3)
+- **Database:** SQLite via sql.js (WebAssembly, zero native dependencies)
 - **Frontend:** EJS templates + HTMX
 - **Testing:** Vitest (setup included, tests are homework)
 

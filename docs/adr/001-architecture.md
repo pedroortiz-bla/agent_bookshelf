@@ -9,7 +9,7 @@ We are building a Goodreads-lite application that serves as a teaching playgroun
 
 ## Decision
 
-We will build a TypeScript Node.js application using Express, SQLite (better-sqlite3), EJS templates, and HTMX. It will ship as an npx-installable CLI that starts a local web server with both HTML views and a JSON API. Data will be pre-seeded on first run.
+We will build a TypeScript Node.js application using Express, SQLite via sql.js (WebAssembly), EJS templates, and HTMX. It will ship as an npx-installable CLI that starts a local web server with both HTML views and a JSON API. Data will be pre-seeded on first run.
 
 ## Rationale
 
