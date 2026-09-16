@@ -35,8 +35,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-export function startServer(dbPath?: string) {
-  initDb(dbPath);
+export async function startServer(dbPath?: string) {
+  await initDb(dbPath);
 
   app.listen(PORT, () => {
     console.log(`Bookshelf running at http://localhost:${PORT}`);
@@ -44,7 +44,8 @@ export function startServer(dbPath?: string) {
 }
 
 const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
-  process.argv[1]?.endsWith('server.ts');
+  process.argv[1]?.endsWith('server.ts') ||
+  process.argv[1]?.endsWith('server.js');
 
 if (isMainModule) {
   startServer();

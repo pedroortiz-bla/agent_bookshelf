@@ -1,20 +1,17 @@
 import { Router, Request, Response } from 'express';
-import { getDb } from '../db/index.js';
 import * as Book from '../models/book.js';
 import * as Review from '../models/review.js';
 
 const router = Router();
 
 router.get('/', (req: Request, res: Response) => {
-  const db = getDb();
-  const books = Book.getAllBooks(db);
+  const books = Book.getAllBooks();
   res.render('books/index', { books });
 });
 
 router.get('/books/search', (req: Request, res: Response) => {
-  const db = getDb();
   const query = req.query.q as string;
-  
+
   // TODO: Implement search functionality
   // This is a deliberate homework gap - agents should implement the search backend
   // For now, return empty results with a message
@@ -26,22 +23,20 @@ router.get('/books/search', (req: Request, res: Response) => {
 });
 
 router.get('/books/:id', (req: Request, res: Response) => {
-  const db = getDb();
   const bookId = parseInt(req.params.id as string, 10);
-  const book = Book.getBookById(db, bookId);
+  const book = Book.getBookById(bookId);
 
   if (!book) {
     return res.status(404).render('error', { message: 'Book not found' });
   }
 
-  const reviews = Review.getReviewsByBookId(db, bookId);
-  const averageRating = Review.getAverageRating(db, bookId);
+  const reviews = Review.getReviewsByBookId(bookId);
+  const averageRating = Review.getAverageRating(bookId);
 
   res.render('books/show', { book, reviews, averageRating });
 });
 
 router.post('/books/:id/reviews', (req: Request, res: Response) => {
-  const db = getDb();
   const bookId = parseInt(req.params.id as string, 10);
   const { userId, rating, reviewText } = req.body;
 
@@ -49,14 +44,14 @@ router.post('/books/:id/reviews', (req: Request, res: Response) => {
     return res.status(400).send('<p class="error">User and rating are required</p>');
   }
 
-  const existing = Review.getReviewByUserAndBook(db, parseInt(userId), bookId);
+  const existing = Review.getReviewByUserAndBook(parseInt(userId), bookId);
   if (existing) {
     return res.status(409).send('<p class="error">You have already reviewed this book</p>');
   }
 
-  Review.createReview(db, parseInt(userId), bookId, parseInt(rating), reviewText);
-  
-  const reviews = Review.getReviewsByBookId(db, bookId);
+  Review.createReview(parseInt(userId), bookId, parseInt(rating), reviewText);
+
+  const reviews = Review.getReviewsByBookId(bookId);
   res.render('books/reviews-list', { reviews });
 });
 

@@ -1,11 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { initDb, closeDb, getDb } from '../src/db/index.js';
-import Database from 'better-sqlite3';
+import { initDb, closeDb, all } from '../src/db/index.js';
 
-let db: Database.Database;
-
-beforeEach(() => {
-  db = initDb('/tmp/test-bookshelf.db');
+beforeEach(async () => {
+  await initDb('/tmp/test-bookshelf.db');
 });
 
 afterEach(() => {
@@ -20,22 +17,22 @@ afterEach(() => {
 
 describe('Database', () => {
   it('initializes with seed data', () => {
-    const users = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
-    expect(users.count).toBe(3);
+    const users = all('SELECT COUNT(*) as count FROM users');
+    expect(users[0].count).toBe(3);
   });
 
   it('seeds 50 books', () => {
-    const books = db.prepare('SELECT COUNT(*) as count FROM books').get() as { count: number };
-    expect(books.count).toBe(50);
+    const books = all('SELECT COUNT(*) as count FROM books');
+    expect(books[0].count).toBe(50);
   });
 
   it('creates shelves for each user', () => {
-    const shelves = db.prepare('SELECT COUNT(*) as count FROM shelves').get() as { count: number };
-    expect(shelves.count).toBe(9); // 3 users × 3 shelves each
+    const shelves = all('SELECT COUNT(*) as count FROM shelves');
+    expect(shelves[0].count).toBe(9);
   });
 
   it('seeds sample reviews', () => {
-    const reviews = db.prepare('SELECT COUNT(*) as count FROM reviews').get() as { count: number };
-    expect(reviews.count).toBeGreaterThan(0);
+    const reviews = all('SELECT COUNT(*) as count FROM reviews');
+    expect(reviews[0].count).toBeGreaterThan(0);
   });
 });

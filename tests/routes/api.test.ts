@@ -3,8 +3,8 @@ import request from 'supertest';
 import app from '../../src/server.js';
 import { initDb, closeDb } from '../../src/db/index.js';
 
-beforeEach(() => {
-  initDb('/tmp/test-api.db');
+beforeEach(async () => {
+  await initDb('/tmp/test-api.db');
 });
 
 afterEach(() => {
@@ -51,7 +51,7 @@ describe('API Routes', () => {
           rating: 5,
           reviewText: 'Amazing book!'
         });
-      
+
       expect(res.status).toBe(201);
       expect(res.body.rating).toBe(5);
       expect(res.body.review_text).toBe('Amazing book!');
@@ -67,7 +67,7 @@ describe('API Routes', () => {
           rating: 4,
           reviewText: 'Trying to review again'
         });
-      
+
       expect(res.status).toBe(409);
     });
 
@@ -80,7 +80,7 @@ describe('API Routes', () => {
           rating: 6,
           reviewText: 'Invalid rating'
         });
-      
+
       expect(res.status).toBe(400);
     });
   });

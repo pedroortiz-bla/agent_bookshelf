@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { all, get, run } from '../db/index.js';
 
 export interface Shelf {
   id: number;
@@ -19,74 +19,77 @@ export interface ShelfBook {
   author: string;
 }
 
-export function getShelvesByUserId(db: Database.Database, userId: number): Shelf[] {
-  return db.prepare(
-    'SELECT * FROM shelves WHERE user_id = ? ORDER BY name'
-  ).all(userId) as Shelf[];
+export function getShelvesByUserId(userId: number): Shelf[] {
+  return all(
+    'SELECT * FROM shelves WHERE user_id = ? ORDER BY name',
+    [userId]
+  ) as unknown as Shelf[];
 }
 
-export function getShelfById(db: Database.Database, id: number): Shelf | undefined {
-  return db.prepare('SELECT * FROM shelves WHERE id = ?').get(id) as Shelf | undefined;
+export function getShelfById(id: number): Shelf | undefined {
+  return get('SELECT * FROM shelves WHERE id = ?', [id]) as unknown as Shelf | undefined;
 }
 
-export function getShelfWithBooks(db: Database.Database, shelfId: number): ShelfWithBooks | undefined {
-  const shelf = db.prepare(`
+export function getShelfWithBooks(shelfId: number): ShelfWithBooks | undefined {
+  const shelf = get(`
     SELECT s.*, u.username
     FROM shelves s
     JOIN users u ON s.user_id = u.id
     WHERE s.id = ?
-  `).get(shelfId) as (Shelf & { username: string }) | undefined;
+  `, [shelfId]) as unknown as (Shelf & { username: string }) | undefined;
 
   if (!shelf) return undefined;
 
-  const books = db.prepare(`
+  const books = all(`
     SELECT sb.book_id, sb.added_at, b.title, b.author
     FROM shelf_books sb
     JOIN books b ON sb.book_id = b.id
     WHERE sb.shelf_id = ?
     ORDER BY b.title
-  `).all(shelfId) as ShelfBook[];
+  `, [shelfId]) as unknown as ShelfBook[];
 
   return { ...shelf, books };
 }
 
-export function createShelf(db: Database.Database, userId: number, name: string): Shelf {
-  const stmt = db.prepare('INSERT INTO shelves (user_id, name) VALUES (?, ?)');
-  const result = stmt.run(userId, name);
-  return getShelfById(db, result.lastInsertRowid as number)!;
+export function createShelf(userId: number, name: string): Shelf {
+  const result = run('INSERT INTO shelves (user_id, name) VALUES (?, ?)', [userId, name]);
+  return getShelfById(result.lastInsertRowid)!;
 }
 
-export function deleteShelf(db: Database.Database, id: number): boolean {
-  const result = db.prepare('DELETE FROM shelves WHERE id = ?').run(id);
+export function deleteShelf(id: number): boolean {
+  const result = run('DELETE FROM shelves WHERE id = ?', [id]);
   return result.changes > 0;
 }
 
-export function addBookToShelf(db: Database.Database, shelfId: number, bookId: number): boolean {
-  const existing = db.prepare(
-    'SELECT 1 FROM shelf_books WHERE shelf_id = ? AND book_id = ?'
-  ).get(shelfId, bookId);
+export function addBookToShelf(shelfId: number, bookId: number): boolean {
+  const existing = get(
+    'SELECT 1 FROM shelf_books WHERE shelf_id = ? AND book_id = ?',
+    [shelfId, bookId]
+  );
 
   if (existing) return false;
 
-  db.prepare(
-    'INSERT INTO shelf_books (shelf_id, book_id) VALUES (?, ?)'
-  ).run(shelfId, bookId);
+  run(
+    'INSERT INTO shelf_books (shelf_id, book_id) VALUES (?, ?)',
+    [shelfId, bookId]
+  );
   return true;
 }
 
-export function removeBookFromShelf(db: Database.Database, shelfId: number, bookId: number): boolean {
-  const result = db.prepare(
-    'DELETE FROM shelf_books WHERE shelf_id = ? AND book_id = ?'
-  ).run(shelfId, bookId);
+export function removeBookFromShelf(shelfId: number, bookId: number): boolean {
+  const result = run(
+    'DELETE FROM shelf_books WHERE shelf_id = ? AND book_id = ?',
+    [shelfId, bookId]
+  );
   return result.changes > 0;
 }
 
-export function getShelvesForBook(db: Database.Database, userId: number, bookId: number): Shelf[] {
-  return db.prepare(`
+export function getShelvesForBook(userId: number, bookId: number): Shelf[] {
+  return all(`
     SELECT s.*
     FROM shelves s
     JOIN shelf_books sb ON s.id = sb.shelf_id
     WHERE s.user_id = ? AND sb.book_id = ?
     ORDER BY s.name
-  `).all(userId, bookId) as Shelf[];
+  `, [userId, bookId]) as unknown as Shelf[];
 }

@@ -39,35 +39,16 @@ npm -v    # should print 11.x.x
 
 ## Quick Start
 
-### Using npx (recommended)
+### Using npx
 
 ```bash
+corepack enable
+npm install
+npm run build
 npx agent-bookshelf
 ```
 
 That's it! The app will start at http://localhost:3000 with pre-seeded data.
-
-### Install globally
-
-```bash
-npm install -g agent-bookshelf
-agent-bookshelf
-```
-
-### From source
-
-```bash
-git clone <repository-url>
-cd agent_bookshelf
-npm install
-npm start
-```
-
-`npm install` automatically builds the project. For development with hot reload:
-
-```bash
-npm run dev
-```
 
 ## What is this?
 

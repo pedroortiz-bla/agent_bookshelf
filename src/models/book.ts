@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { all, get, run } from '../db/index.js';
 
 export interface Book {
   id: number;
@@ -11,46 +11,32 @@ export interface Book {
   created_at: string;
 }
 
-export function getAllBooks(db: Database.Database): Book[] {
-  return db.prepare('SELECT * FROM books ORDER BY title').all() as Book[];
+export function getAllBooks(): Book[] {
+  return all('SELECT * FROM books ORDER BY title') as unknown as Book[];
 }
 
-export function getBookById(db: Database.Database, id: number): Book | undefined {
-  return db.prepare('SELECT * FROM books WHERE id = ?').get(id) as Book | undefined;
+export function getBookById(id: number): Book | undefined {
+  return get('SELECT * FROM books WHERE id = ?', [id]) as unknown as Book | undefined;
 }
 
-export function searchBooks(db: Database.Database, query: string): Book[] {
+export function searchBooks(query: string): Book[] {
   const pattern = `%${query}%`;
-  return db.prepare(
-    'SELECT * FROM books WHERE title LIKE ? OR author LIKE ? ORDER BY title'
-  ).all(pattern, pattern) as Book[];
+  return all(
+    'SELECT * FROM books WHERE title LIKE ? OR author LIKE ? ORDER BY title',
+    [pattern, pattern]
+  ) as unknown as Book[];
 }
 
-export function createBook(
-  db: Database.Database,
-  data: Omit<Book, 'id' | 'created_at'>
-): Book {
-  const stmt = db.prepare(`
-    INSERT INTO books (title, author, isbn, cover_url, description, published_year)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
-  const result = stmt.run(
-    data.title,
-    data.author,
-    data.isbn,
-    data.cover_url,
-    data.description,
-    data.published_year
+export function createBook(data: Omit<Book, 'id' | 'created_at'>): Book {
+  const result = run(
+    'INSERT INTO books (title, author, isbn, cover_url, description, published_year) VALUES (?, ?, ?, ?, ?, ?)',
+    [data.title, data.author, data.isbn, data.cover_url, data.description, data.published_year]
   );
-  return getBookById(db, result.lastInsertRowid as number)!;
+  return getBookById(result.lastInsertRowid)!;
 }
 
-export function updateBook(
-  db: Database.Database,
-  id: number,
-  data: Partial<Omit<Book, 'id' | 'created_at'>>
-): Book | undefined {
-  const existing = getBookById(db, id);
+export function updateBook(id: number, data: Partial<Omit<Book, 'id' | 'created_at'>>): Book | undefined {
+  const existing = getBookById(id);
   if (!existing) return undefined;
 
   const updates: string[] = [];
@@ -84,11 +70,11 @@ export function updateBook(
   if (updates.length === 0) return existing;
 
   values.push(id);
-  db.prepare(`UPDATE books SET ${updates.join(', ')} WHERE id = ?`).run(...values);
-  return getBookById(db, id);
+  run(`UPDATE books SET ${updates.join(', ')} WHERE id = ?`, values);
+  return getBookById(id);
 }
 
-export function deleteBook(db: Database.Database, id: number): boolean {
-  const result = db.prepare('DELETE FROM books WHERE id = ?').run(id);
+export function deleteBook(id: number): boolean {
+  const result = run('DELETE FROM books WHERE id = ?', [id]);
   return result.changes > 0;
 }
