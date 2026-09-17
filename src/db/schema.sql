@@ -46,8 +46,17 @@ CREATE TABLE IF NOT EXISTS reviews (
   UNIQUE(user_id, book_id)
 );
 
+CREATE TABLE IF NOT EXISTS customers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  phone TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_books_title ON books(title);
 CREATE INDEX IF NOT EXISTS idx_books_author ON books(author);
 CREATE INDEX IF NOT EXISTS idx_reviews_book_id ON reviews(book_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
 CREATE INDEX IF NOT EXISTS idx_shelves_user_id ON shelves(user_id);
+CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);
