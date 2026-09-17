@@ -1,4 +1,4 @@
-import { get, run } from '../db/index.js';
+import { all, get, run } from '../db/index.js';
 import type { IRepository } from './repository.js';
 
 export interface Customer {
@@ -56,7 +56,7 @@ export class CustomerRepository implements IRepository<Customer, CreateCustomerI
   }
 
   findAll(): Customer[] {
-    throw new Error('Not implemented yet');
+    return all('SELECT * FROM customers ORDER BY name') as unknown as Customer[];
   }
 
   update(_id: number, _input: UpdateCustomerInput): Customer | undefined {

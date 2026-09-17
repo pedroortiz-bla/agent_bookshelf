@@ -66,4 +66,20 @@ describe('CustomerRepository', () => {
       expect(repo.findById(9999)).toBeUndefined();
     });
   });
+
+  describe('findAll', () => {
+    it('returns every customer ordered by name', () => {
+      repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+      repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      const customers = repo.findAll();
+
+      expect(customers).toHaveLength(2);
+      expect(customers.map((c) => c.name)).toEqual(['Ada Lovelace', 'Grace Hopper']);
+    });
+
+    it('returns an empty array when there are no customers', () => {
+      expect(repo.findAll()).toEqual([]);
+    });
+  });
 });
