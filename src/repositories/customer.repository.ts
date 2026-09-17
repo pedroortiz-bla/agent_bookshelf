@@ -48,11 +48,11 @@ export class CustomerRepository implements IRepository<Customer, CreateCustomerI
       'INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)',
       [name, email, input.phone ?? null]
     );
-    return get('SELECT * FROM customers WHERE id = ?', [result.lastInsertRowid]) as unknown as Customer;
+    return this.findById(result.lastInsertRowid)!;
   }
 
-  findById(_id: number): Customer | undefined {
-    throw new Error('Not implemented yet');
+  findById(id: number): Customer | undefined {
+    return get('SELECT * FROM customers WHERE id = ?', [id]) as unknown as Customer | undefined;
   }
 
   findAll(): Customer[] {

@@ -52,4 +52,18 @@ describe('CustomerRepository', () => {
       expect(() => repo.create({ name: 'Ada Byron', email: 'ada@example.com' })).toThrow(/already exists/i);
     });
   });
+
+  describe('findById', () => {
+    it('returns the customer with the given id', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      const found = repo.findById(created.id);
+
+      expect(found).toEqual(created);
+    });
+
+    it('returns undefined for a non-existent id', () => {
+      expect(repo.findById(9999)).toBeUndefined();
+    });
+  });
 });
