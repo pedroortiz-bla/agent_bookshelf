@@ -87,8 +87,8 @@ export class CustomerRepository implements IRepository<Customer, CreateCustomerI
     return this.findById(id);
   }
 
-  delete(_id: number): boolean {
-    throw new Error('Not implemented yet');
+  delete(id: number): boolean {
+    return run('DELETE FROM customers WHERE id = ?', [id]).changes > 0;
   }
 
   /** Throws when `email` is taken by a customer other than `exceptId`. */

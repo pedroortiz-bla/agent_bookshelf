@@ -117,4 +117,26 @@ describe('CustomerRepository', () => {
       expect(() => repo.update(created.id, { email: 'not-an-email' })).toThrow(/valid email/i);
     });
   });
+
+  describe('delete', () => {
+    it('removes the customer and reports success', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(repo.delete(created.id)).toBe(true);
+      expect(repo.findById(created.id)).toBeUndefined();
+    });
+
+    it('returns false for a non-existent id', () => {
+      expect(repo.delete(9999)).toBe(false);
+    });
+
+    it('leaves other customers untouched', () => {
+      const ada = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+      repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+
+      repo.delete(ada.id);
+
+      expect(repo.findAll().map((c) => c.name)).toEqual(['Grace Hopper']);
+    });
+  });
 });
