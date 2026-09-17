@@ -1,0 +1,142 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { unlinkSync } from 'fs';
+import { initDb, closeDb } from '../../src/db/index.js';
+import { CustomerRepository } from '../../src/repositories/customer.repository.js';
+
+const TEST_DB_PATH = '/tmp/test-customer-repository.db';
+
+let repo: CustomerRepository;
+
+beforeEach(async () => {
+  await initDb(TEST_DB_PATH);
+  repo = new CustomerRepository();
+});
+
+afterEach(() => {
+  closeDb();
+  try {
+    unlinkSync(TEST_DB_PATH);
+  } catch (e) {
+    // ignore
+  }
+});
+
+describe('CustomerRepository', () => {
+  describe('create', () => {
+    it('persists a customer and returns it with a generated id', () => {
+      const customer = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(customer.id).toBeGreaterThan(0);
+      expect(customer.name).toBe('Ada Lovelace');
+      expect(customer.email).toBe('ada@example.com');
+      expect(customer.created_at).toBeTruthy();
+    });
+
+    it('stores phone as null when it is not supplied', () => {
+      const customer = repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+
+      expect(customer.phone).toBeNull();
+    });
+
+    it('rejects a customer with a blank name', () => {
+      expect(() => repo.create({ name: '   ', email: 'blank@example.com' })).toThrow(/name is required/i);
+    });
+
+    it('rejects a customer with an invalid email', () => {
+      expect(() => repo.create({ name: 'Alan Turing', email: 'not-an-email' })).toThrow(/valid email/i);
+    });
+
+    it('rejects a duplicate email', () => {
+      repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(() => repo.create({ name: 'Ada Byron', email: 'ada@example.com' })).toThrow(/already exists/i);
+    });
+  });
+
+  describe('findById', () => {
+    it('returns the customer with the given id', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      const found = repo.findById(created.id);
+
+      expect(found).toEqual(created);
+    });
+
+    it('returns undefined for a non-existent id', () => {
+      expect(repo.findById(9999)).toBeUndefined();
+    });
+  });
+
+  describe('findAll', () => {
+    it('returns every customer ordered by name', () => {
+      repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+      repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      const customers = repo.findAll();
+
+      expect(customers).toHaveLength(2);
+      expect(customers.map((c) => c.name)).toEqual(['Ada Lovelace', 'Grace Hopper']);
+    });
+
+    it('returns an empty array when there are no customers', () => {
+      expect(repo.findAll()).toEqual([]);
+    });
+  });
+
+  describe('update', () => {
+    it('applies only the supplied fields', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com', phone: '555-0100' });
+
+      const updated = repo.update(created.id, { name: 'Ada Byron' });
+
+      expect(updated?.name).toBe('Ada Byron');
+      expect(updated?.email).toBe('ada@example.com');
+      expect(updated?.phone).toBe('555-0100');
+    });
+
+    it('returns the untouched customer when no fields are supplied', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(repo.update(created.id, {})).toEqual(created);
+    });
+
+    it('returns undefined for a non-existent id', () => {
+      expect(repo.update(9999, { name: 'Nobody' })).toBeUndefined();
+    });
+
+    it('rejects an update that would duplicate another email', () => {
+      repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+      const grace = repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+
+      expect(() => repo.update(grace.id, { email: 'ada@example.com' })).toThrow(/already exists/i);
+    });
+
+    it('rejects an invalid email', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(() => repo.update(created.id, { email: 'not-an-email' })).toThrow(/valid email/i);
+    });
+  });
+
+  describe('delete', () => {
+    it('removes the customer and reports success', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(repo.delete(created.id)).toBe(true);
+      expect(repo.findById(created.id)).toBeUndefined();
+    });
+
+    it('returns false for a non-existent id', () => {
+      expect(repo.delete(9999)).toBe(false);
+    });
+
+    it('leaves other customers untouched', () => {
+      const ada = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+      repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+
+      repo.delete(ada.id);
+
+      expect(repo.findAll().map((c) => c.name)).toEqual(['Grace Hopper']);
+    });
+  });
+});
