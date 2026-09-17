@@ -39,10 +39,7 @@ export class CustomerRepository implements IRepository<Customer, CreateCustomerI
   create(input: CreateCustomerInput): Customer {
     const name = normalizeName(input.name ?? '');
     const email = normalizeEmail(input.email ?? '');
-
-    if (get('SELECT id FROM customers WHERE email = ?', [email])) {
-      throw new Error(`A customer with email ${email} already exists`);
-    }
+    this.assertEmailIsFree(email);
 
     const result = run(
       'INSERT INTO customers (name, email, phone) VALUES (?, ?, ?)',
@@ -59,11 +56,46 @@ export class CustomerRepository implements IRepository<Customer, CreateCustomerI
     return all('SELECT * FROM customers ORDER BY name') as unknown as Customer[];
   }
 
-  update(_id: number, _input: UpdateCustomerInput): Customer | undefined {
-    throw new Error('Not implemented yet');
+  update(id: number, input: UpdateCustomerInput): Customer | undefined {
+    const existing = this.findById(id);
+    if (!existing) return undefined;
+
+    const updates: string[] = [];
+    const values: unknown[] = [];
+
+    if (input.name !== undefined) {
+      updates.push('name = ?');
+      values.push(normalizeName(input.name));
+    }
+
+    if (input.email !== undefined) {
+      const email = normalizeEmail(input.email);
+      this.assertEmailIsFree(email, id);
+      updates.push('email = ?');
+      values.push(email);
+    }
+
+    if (input.phone !== undefined) {
+      updates.push('phone = ?');
+      values.push(input.phone);
+    }
+
+    if (updates.length === 0) return existing;
+
+    values.push(id);
+    run(`UPDATE customers SET ${updates.join(', ')} WHERE id = ?`, values);
+    return this.findById(id);
   }
 
   delete(_id: number): boolean {
     throw new Error('Not implemented yet');
+  }
+
+  /** Throws when `email` is taken by a customer other than `exceptId`. */
+  private assertEmailIsFree(email: string, exceptId?: number): void {
+    const owner = get('SELECT id FROM customers WHERE email = ?', [email]) as { id: number } | undefined;
+    if (owner && owner.id !== exceptId) {
+      throw new Error(`A customer with email ${email} already exists`);
+    }
   }
 }

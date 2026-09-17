@@ -82,4 +82,39 @@ describe('CustomerRepository', () => {
       expect(repo.findAll()).toEqual([]);
     });
   });
+
+  describe('update', () => {
+    it('applies only the supplied fields', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com', phone: '555-0100' });
+
+      const updated = repo.update(created.id, { name: 'Ada Byron' });
+
+      expect(updated?.name).toBe('Ada Byron');
+      expect(updated?.email).toBe('ada@example.com');
+      expect(updated?.phone).toBe('555-0100');
+    });
+
+    it('returns the untouched customer when no fields are supplied', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(repo.update(created.id, {})).toEqual(created);
+    });
+
+    it('returns undefined for a non-existent id', () => {
+      expect(repo.update(9999, { name: 'Nobody' })).toBeUndefined();
+    });
+
+    it('rejects an update that would duplicate another email', () => {
+      repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+      const grace = repo.create({ name: 'Grace Hopper', email: 'grace@example.com' });
+
+      expect(() => repo.update(grace.id, { email: 'ada@example.com' })).toThrow(/already exists/i);
+    });
+
+    it('rejects an invalid email', () => {
+      const created = repo.create({ name: 'Ada Lovelace', email: 'ada@example.com' });
+
+      expect(() => repo.update(created.id, { email: 'not-an-email' })).toThrow(/valid email/i);
+    });
+  });
 });
