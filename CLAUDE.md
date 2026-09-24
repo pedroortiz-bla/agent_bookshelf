@@ -47,14 +47,8 @@ verification suite (typecheck, tests, build).
 - **Assets are copied, not bundled.** New runtime files under `src/` that are not `.ts` must be
   added to the `copy-assets` script or they will be missing from `dist/`.
 
-## Memory bank
-
-Durable project knowledge lives in `memory-bank/` (see `memory-bank/README.md`). Read
-`memory-bank/gotchas.md` at the start of every task; capture new findings with `/remember`.
-
 ## Skills
 
 | Skill | Purpose |
 |---|---|
 | `/verify` | Full local verification suite — typecheck, tests, build |
-| `/remember` | Capture a learning into `memory-bank/` |
