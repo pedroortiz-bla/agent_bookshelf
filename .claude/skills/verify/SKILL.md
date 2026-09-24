@@ -57,9 +57,10 @@ ls dist/views dist/db
 git status --porcelain
 ```
 
-`bookshelf.db-shm` and `bookshelf.db-wal` are tracked in git even though `*.db` is ignored, so
-SQLite WAL artifacts from a local run can show up here as unintended diffs. Never stage them
-as part of a feature change. `dist/` is ignored — do not try to commit build output.
+Expect this to be empty. `dist/` and `*.db` are ignored, so neither a build nor a local run of
+the app should leave anything here — if something shows up, look at it before staging rather
+than reaching for `git add -A`. (`bookshelf.db-shm` and `bookshelf.db-wal` are tracked despite
+the `*.db` rule, but nothing writes them any more; see `[GOTCHA:wal-artifacts-tracked]`.)
 
 ## Reporting
 
