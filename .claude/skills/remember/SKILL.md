@@ -70,7 +70,9 @@ Ask: **could a hook make this unreachable instead of merely documented?**
 Documentation only helps the agent that read it; a `PreToolUse` deny helps every agent. If the
 finding is a command that should never run, add a rule to `.claude/hooks/guard-commands.mjs`,
 add a case to `.claude/hooks/test-guard.sh`, and run that harness. Cross-reference the entry
-and the rule so neither is deleted alone.
+and the rule so neither is deleted alone. (The hook and its harness ship on the
+`pedro/session-3-skill-hook` branch, PR #1; if they are not present, record the proposed rule
+in `open-questions.md` instead.)
 
 `[GOTCHA:npm-test-watch]` is the worked example: an entry in `gotchas.md` *and* a deny rule.
 

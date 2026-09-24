@@ -50,7 +50,8 @@ work → hit something surprising → verify it → /remember → commit
 
 Capturing with [`/remember`](../.claude/skills/remember/SKILL.md) is the last step of any
 non-trivial task. Where a finding can be enforced rather than documented, enforce it — the
-`npm test` watch-mode trap below is both an entry here *and* a deny rule in
-`.claude/hooks/guard-commands.mjs`, because documentation only helps the agent that read it.
+`npm test` watch-mode trap below is both an entry here *and* a deny rule in the
+`guard-commands.mjs` hook (Session 3 deliverable, `pedro/session-3-skill-hook` / PR #1), because
+documentation only helps the agent that read it.
 
 When an entry turns out to be wrong, delete it. Do not append a correction underneath.

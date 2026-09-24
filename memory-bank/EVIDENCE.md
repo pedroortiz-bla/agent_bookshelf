@@ -34,7 +34,8 @@ $ timeout 25 npm test < /dev/null
 ```
 
 → recorded as `[GOTCHA:npm-test-watch]`, **and** enforced as a deny rule in
-`.claude/hooks/guard-commands.mjs` (Deliverable 1). This is step 5 of `/remember`: where a
+`.claude/hooks/guard-commands.mjs` (Deliverable 1, on the separate `pedro/session-3-skill-hook`
+branch / PR #1). This is step 5 of `/remember`: where a
 finding is mechanically preventable, a hook beats a paragraph.
 
 **Finding 2 — writes are lost on exit.** Suspected from reading `src/db/index.ts` (`run()`
@@ -131,8 +132,8 @@ $ git status --porcelain
 Those files are leftovers from the `better-sqlite3` era (Decision 1), not a live tripwire. The
 entry was rewritten in place with the verification attached — not amended underneath, per the
 README's rule that two entries disagreeing both read as current. The same wrong claim had
-already propagated into the `/verify` skill's working-tree step, which was corrected in the
-same pass.
+already propagated into the `/verify` skill's working-tree step (Deliverable 1 branch), which
+was corrected in the same pass.
 
 The cost of the unverified half was visible before it was caught: the headless session quoted
 above repeated it back as fact ("running locally can change the tracked files"). That is what

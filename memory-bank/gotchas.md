@@ -8,8 +8,8 @@ commit `0e6fb66`; the repro is included so you can re-check rather than trust.
 - **[GOTCHA:npm-test-watch] `npm test` never exits.** The script is bare `vitest`, which is
   watch mode — it prints `PASS Waiting for file changes...` and holds the terminal. In a
   non-interactive agent session that hangs the turn until something kills it. Use
-  `npm run test:run` (`vitest run`). Enforced: `.claude/hooks/guard-commands.mjs` denies the
-  watch-mode forms at the PreToolUse boundary.
+  `npm run test:run` (`vitest run`). Enforced: the `guard-commands.mjs` PreToolUse hook denies the
+  watch-mode forms (shipped separately on the `pedro/session-3-skill-hook` branch, PR #1).
 
   ```
   $ timeout 25 npm test < /dev/null
