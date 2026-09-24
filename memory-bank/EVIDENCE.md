@@ -104,6 +104,40 @@ and `tests/setup.ts` first — and the blocker would not have been surfaced at a
 re-derived the `saveDb` call sites independently (`index.ts:42,63`), which is the bank working as
 intended: claims cheap enough to re-check, not taken on faith.
 
+## The rule that earned its place
+
+`README.md` says entries are verified or explicitly labelled `Unverified:`, and `/remember`
+makes verification a step. Reviewing this branch found an entry that broke its own rule, which
+is the best argument for having it.
+
+`[GOTCHA:wal-artifacts-tracked]` originally warned that a local run dirties the tracked
+`bookshelf.db-shm` / `-wal` files, so you should check `git status` before staging. The
+*tracking* was verified (`git ls-files`). The *consequence* was not — I had inferred it from
+the filenames.
+
+It is false. sql.js keeps the database in memory and persists with a plain `writeFileSync`
+(`src/db/index.ts:53`); it never opens a WAL. Booting the server and letting `initDb`/`saveDb`
+run:
+
+```
+2026-09-24 14:12:02  bookshelf.db        <-- rewritten by saveDb
+2026-09-24 13:48:15  bookshelf.db-shm    <-- untouched
+2026-09-24 13:48:15  bookshelf.db-wal    <-- untouched
+
+$ git status --porcelain
+(empty)
+```
+
+Those files are leftovers from the `better-sqlite3` era (Decision 1), not a live tripwire. The
+entry was rewritten in place with the verification attached — not amended underneath, per the
+README's rule that two entries disagreeing both read as current. The same wrong claim had
+already propagated into the `/verify` skill's working-tree step, which was corrected in the
+same pass.
+
+The cost of the unverified half was visible before it was caught: the headless session quoted
+above repeated it back as fact ("running locally can change the tracked files"). That is what
+an unverified entry buys you — not a gap, but a confident wrong answer with a citation on it.
+
 ## Design notes
 
 - **Verified or labelled.** Every claim carries a repro or a `file:line`. The `/remember` skill

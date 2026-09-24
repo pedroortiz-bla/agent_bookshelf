@@ -79,10 +79,18 @@ commit `0e6fb66`; the repro is included so you can re-check rather than trust.
 ---
 
 - **[GOTCHA:wal-artifacts-tracked] `bookshelf.db-shm` and `bookshelf.db-wal` are committed to
-  git even though `.gitignore` ignores `*.db`.** The ignore pattern does not match the `-shm` /
-  `-wal` suffixes, and both files are tracked (`git ls-files | grep bookshelf.db`). A local run
-  that touches them shows up as an unrelated diff in your feature branch. Check
-  `git status --porcelain` before staging, and never `git add -A` blind.
+  git even though `.gitignore` ignores `*.db`** — the ignore pattern does not match the `-shm` /
+  `-wal` suffixes (`git ls-files | grep bookshelf.db`). They are dead artifacts from the
+  `better-sqlite3` era (Decision 1): sql.js keeps the database in memory and persists with a
+  plain `writeFileSync` (`src/db/index.ts:53`), so it never opens a WAL and never touches
+  either file. Verified — after booting the server and letting `initDb`/`saveDb` run,
+  `bookshelf.db` is rewritten while both WAL files keep their original mtime and
+  `git status --porcelain` stays empty. So they are committed noise, not a live tripwire: do
+  not delete them in a feature branch (see `[OPEN] Q3`), and do not expect them to explain a
+  dirty tree.
+
+  Your local `bookshelf.db` *is* written on every run, but `*.db` is ignored, so it does not
+  show up in `git status`.
 
 ---
 

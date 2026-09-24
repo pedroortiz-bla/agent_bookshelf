@@ -34,6 +34,7 @@ resolving before a cohort writes tests against it.
 
 ### `[OPEN]` Q3 — Should `bookshelf.db-shm` / `-wal` be untracked?
 
-They are committed but are runtime artifacts (`[GOTCHA:wal-artifacts-tracked]`). Removing them
-from the index is a one-line change, but it rewrites state other students may have pulled, so
-it wants the repo owner's call rather than a drive-by fix.
+They are committed but nothing writes them any more — sql.js never opens a WAL
+(`[GOTCHA:wal-artifacts-tracked]`), so they are leftovers from the `better-sqlite3` era.
+`git rm --cached` plus a `.gitignore` line is the whole fix, but it touches state other
+students may have pulled, so it wants the repo owner's call rather than a drive-by fix.
