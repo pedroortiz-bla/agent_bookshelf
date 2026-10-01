@@ -183,6 +183,13 @@ npm run test:run  # Run tests once
 
 Note: The test setup is included, but actual tests are intentionally missing (homework gap).
 
+## Session 5 Submission: MCP Audit & Shell Wrapper
+
+- **MCP audit and context measurement:** [docs/session-5-mcp-audit.md](docs/session-5-mcp-audit.md)
+- **Shell wrapper:** [`tools/jira-search.sh`](tools/jira-search.sh): read-only Jira JQL search (curl + jq). Credentials are read from `~/.config/jira-search.env` (never committed).
+- **Skill:** [`.claude/skills/jira-search/SKILL.md`](.claude/skills/jira-search/SKILL.md)
+- **Evidence:** the same 5-issue query returns 79,169 bytes via the raw API and 493 bytes via the wrapper (~160x smaller).
+
 ## License
 
 GPL-3.0
