@@ -39,4 +39,18 @@ Same query, 5 issues:
 | Wrapper output | 493 |
 
 About 160x smaller, roughly 20k tokens against about 150 tokens (at ~4 bytes/token).
-Per-session context measurement (before/after `/context`) is still to be done in the next session.
+## Context measurement (live, same session, same query, 50 issues)
+
+Query: `project = PE AND text ~ security ORDER BY updated DESC` (the MCP tool's minimum page size is 50).
+
+| Path | Output size | Approx. tokens (~4 bytes/token) |
+|---|---|---|
+| Atlassian MCP `searchJiraIssuesUsingJql` | 272,846 bytes | ~68,000 |
+| `tools/jira-search.sh` (via skill) | 4,039 bytes | ~1,000 |
+
+About 68x smaller. The MCP result was so large the harness refused to put it in context
+("result (272,615 characters) exceeds maximum allowed tokens") and saved it to a file, so the model
+would need extra chunked reads to use it. The wrapper output fits in context in one step.
+
+Caveat: measured as output bytes, converted to tokens by an estimate. It is not a `/context`
+before/after reading, which I could not run from inside the session.

@@ -188,7 +188,7 @@ Note: The test setup is included, but actual tests are intentionally missing (ho
 - **MCP audit and context measurement:** [docs/session-5-mcp-audit.md](docs/session-5-mcp-audit.md)
 - **Shell wrapper:** [`tools/jira-search.sh`](tools/jira-search.sh): read-only Jira JQL search (curl + jq). Credentials are read from `~/.config/jira-search.env` (never committed).
 - **Skill:** [`.claude/skills/jira-search/SKILL.md`](.claude/skills/jira-search/SKILL.md)
-- **Evidence:** the same 5-issue query returns 79,169 bytes via the raw API and 493 bytes via the wrapper (~160x smaller).
+- **Evidence:** the same 50-issue query returns 272,846 bytes via the Atlassian MCP (too large to enter context) and 4,039 bytes via the wrapper (~68x smaller, ~68k vs ~1k tokens). A 5-issue query is 79,169 vs 493 bytes against the raw API.
 
 ## License
 
