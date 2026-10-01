@@ -1,0 +1,8 @@
+Query: project = PE AND text ~ security ORDER BY updated DESC (50 issues, run 2026-10-01T17:44Z)
+
+Atlassian MCP searchJiraIssuesUsingJql:
+  result: 272,615 characters -> harness error: 'result exceeds maximum allowed tokens', saved to file instead of entering context
+  file size: 272846 bytes, issues: 50
+
+tools/jira-search.sh:
+  output size: 4039 bytes, lines: 50

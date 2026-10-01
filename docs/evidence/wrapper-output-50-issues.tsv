@@ -1,0 +1,50 @@
+PE-4454	Done	Gustavo Silva	Per-device session hardening: Secure cookie on staging, rescue around cookie persistence, document that UserSession is not yet an auth gate
+PE-4443	Backlog	Pedro Ortiz Cattebeke	Audit and rotate credentials in tracked env files; untrack them
+PE-4387	Done	Pedro Ortiz Cattebeke	Penetration Test Vulnerabilities: Deprecation
+PE-4384	Done	Gustavo Silva	Penetration Test Vulnerabilities: Timeout
+PE-4390	Done	Pedro Ortiz Cattebeke	SOC2 Tickets: Network Security control
+PE-4391	Done	Unassigned	SOC2 Tickets: Incidents
+PE-4392	Done	Gustavo Silva	SOC2 Tickets: System Changes
+PE-4427	Done	Unassigned	SOC2 Tickets: encrypted connections
+PE-4397	Done	Unassigned	SOC2 Tickets: Monitoring Systems
+PE-4412	Done	Byron Martínez Paba	SOC2 Tickets: Network Diagrams
+PE-4273	Canceled	Byron Martínez Paba	Migrate Snowflake LEGACY_SERVICE users to key-pair auth + TYPE = SERVICE (Trust Center Critical)
+PE-4385	In Progress	Byron Martínez Paba	Penetration Test Vulnerabilities: Wildcard
+PE-4376	Done	Byron Martínez Paba	Amazon EC2 Maintenance: Instance scheduled for reboot 
+PE-4205	Done	Byron Martínez Paba	Upgrade Snowflake Drivers Before End of Support
+PE-4368	Backlog	Byron Martínez Paba	Phase 3 — Terraform: collapse connect module to shared TG + catch-all rule; trim IAM
+PE-4369	Done	Byron Martínez Paba	Phase 4 — Staged cutover: catch-all rule + unblock 95 Columbus & 600 Congress (halt-and-ask)
+PE-4358	Done	Byron Martínez Paba	Renew cortexintel.com TLS cert (expires 2026-09-17) + choose wildcard automation path before Chrome Mar 2027
+PE-3762	Open	Byron Martínez Paba	Migrate from webpacker to esbuild
+PE-3811	Open	Pedro Ortiz Cattebeke	Migrate asset pipeline tools
+PE-4204	Done	Byron Martínez Paba	Install/Implement Dependabot for Automated Dependency Updates
+PE-4036	Done	Gustavo Silva	Security: password requirement updates
+PE-4088	Done	Pedro Ortiz Cattebeke	Ingest Full EnergyCAP Data into Cortex Data Lake
+PE-3765	Canceled	Byron Martínez Paba	Determine if we need to make changes due to Snowflake connector/driver deprecation
+PE-4020	Canceled	Unassigned	EnergyCAP SSO
+PE-4164	Canceled	Gustavo Silva	Rocketlane SSO 
+PE-1786	Canceled	Unassigned	Use OAuth to enforce authentication to the admin panel
+PE-3720	Done	Byron Martínez Paba	Deprecate the use of cortex-analytics
+PE-3806	Done	Unassigned	Comply with upcoming Snowflake MFA requirements
+PE-3755	Done	Pavan Kalyan Goli	Address Firebase Dynamic Links service EOL on 2025-08-25
+PE-4021	Done	Pedro Ortiz Cattebeke	Make cortex app an OpenID Connect Identity Provider
+PE-4019	Done	Fernando Mateos	Bring insight-engine back into security compliance
+PE-4038	Done	Rick Balsano	Security: disable GraphQL introspection
+PE-4040	Canceled	Unassigned	Security: lack of session timeout and availability of concurrent login
+PE-4039	Canceled	Unassigned	Security: legacy SHA1 SSL cipher supported
+PE-578	Done	Rick Balsano	Update target SDK for Cortex Android App
+PE-3000	Done	Unassigned	Security - Mobile apps can be redirected to malicious websites via push notifications
+PE-3841	Canceled	Kristina Trudorudo	Document tips on testing and developing new application emails
+PE-3615	Done	Megan	2025 - SOC2 Yearly Security Access Review for Compliance
+PE-3951	Canceled	Christopher Tang	Upgrade xlsx/sheetJS
+PE-1572	Canceled	Unassigned	Enable Export of Equipment Shutoff Report and Multi-Month Downloads from Building Summary\n\n
+PE-3622	Canceled	Unassigned	Missing Content Security Policy HTTP Header
+PE-3681	Done	Unassigned	Upgrade Ruby to v3.3.1 to get security fixes
+PE-2816	Canceled	Unassigned	Rotate all production credentials in response to Heroku security breach
+PE-2528	Canceled	Unassigned	SendGrid - DKIM Rotation due to leak
+PE-2430	Canceled	Unassigned	Rotate shared/common credentials
+PE-2027	Canceled	Unassigned	Update Fieldpop API token
+PE-1138	Canceled	Megan	Address hard-coded user key in Android app
+PE-224	Canceled	Megan	Document physical integration option for sales
+PE-565	Canceled	Unassigned	Review S3 bucket permissions
+PE-1446	Open	Megan	Security

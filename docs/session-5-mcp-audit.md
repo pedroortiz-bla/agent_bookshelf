@@ -52,5 +52,7 @@ About 68x smaller. The MCP result was so large the harness refused to put it in 
 ("result (272,615 characters) exceeds maximum allowed tokens") and saved it to a file, so the model
 would need extra chunked reads to use it. The wrapper output fits in context in one step.
 
+Raw evidence: `docs/evidence/`.
+
 Caveat: measured as output bytes, converted to tokens by an estimate. It is not a `/context`
 before/after reading, which I could not run from inside the session.
